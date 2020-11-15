@@ -1,3 +1,9 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import 'package:tashcommerce/constants/constants.dart';
+import 'package:tashcommerce/models/categories.dart';
+
 class Characters {
   Characters({
     this.info,
@@ -17,6 +23,16 @@ class Characters {
         "info": info.toJson(),
         "results": List<dynamic>.from(results.map((x) => x.toJson())),
       };
+
+  Future<Characters> fetchData(int page) async {
+    String param = page > 1 ? '?page=$page' : '';
+    final response = await http.get('$rickAndMortyCharacters$param');
+    if (response.statusCode == 200) {
+      return Characters.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load post');
+    }
+  }
 }
 
 class Info {

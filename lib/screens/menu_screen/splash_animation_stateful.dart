@@ -19,7 +19,6 @@ class _SplashAnimationState extends State<SplashAnimation>
   AnimationController _controller;
   ScrollController _scrollController;
   int _currentIndex = 0;
-  int _currentNavIndex = 0;
 
   @override
   void initState() {

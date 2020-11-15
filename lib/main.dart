@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'screens/root_screen.dart';
+import 'screens/menu_screen/root_screen.dart';
 import 'screens/settings_screen.dart';
 
 //void main() => runApp(MyApp());

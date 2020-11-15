@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tashcommerce/api/characters.dart' as api;
@@ -11,27 +10,7 @@ import 'package:tashcommerce/models/categories.dart';
 import 'package:tashcommerce/widgets/episodes_card.dart';
 import 'package:tashcommerce/widgets/fade_on_scroll.dart';
 import 'package:tashcommerce/widgets/character_card.dart';
-import 'package:http/http.dart' as http;
 import 'package:tashcommerce/widgets/locations_card.dart';
-
-Stream<dynamic> fetchData(Categories categories) async* {
-  String param = categories.currentCategoryPage > 1
-      ? '?page=${categories.currentCategoryPage}'
-      : '';
-  final response = await http.get('${rickAndMortyApi(categories)}$param');
-  if (response.statusCode == 200) {
-    if (categories.currentCategory == 'Characters')
-      yield api.Characters.fromJson(json.decode(response.body));
-    else if (categories.currentCategory == 'Locations')
-      yield Locations.fromJson(json.decode(response.body));
-    else if (categories.currentCategory == 'Episodes')
-      yield Episodes.fromJson(json.decode(response.body));
-    else
-      throw Exception('Failed to load post');
-  } else {
-    throw Exception('Failed to load post');
-  }
-}
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({
@@ -47,16 +26,21 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Categories categories;
+  Size size;
+  dynamic dataList;
+
   @override
   Widget build(BuildContext context) {
-    Categories categories = Provider.of<Categories>(context);
-    final size = MediaQuery.of(context).size;
+    size = MediaQuery.of(context).size;
+    categories = Provider.of<Categories>(context);
+    updateData();
+
     return Scaffold(
       body: AnimatedBuilder(
         animation: widget.animation.controller,
         builder: (context, child) {
           return CustomScrollView(
-            // shrinkWrap: true,
             physics: BouncingScrollPhysics(),
             controller: widget.scrollController,
             slivers: <Widget>[
@@ -68,6 +52,9 @@ class _SplashScreenState extends State<SplashScreen> {
 //                      child:
 //                          Text('${categories.currentCategory}', style: kTitle)),
 //                ),
+//                 onStretchTrigger: () {
+//                   return updateData();
+//                 },
                 elevation: 0,
                 pinned: true,
                 stretch: true,
@@ -160,43 +147,38 @@ class _SplashScreenState extends State<SplashScreen> {
                   decoration: BoxDecoration(),
                 ),
               ),
-              StreamBuilder<dynamic>(
-                stream: fetchData(categories),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
+              FutureBuilder(
+                  future: dataList,
+                  builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       categories
                           .setCurrentCategoryMaxPages(snapshot.data.info.pages);
-                      return SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          return Align(
-                            alignment: Alignment.topCenter,
-                            child: buildCard(
-                                snapshot, index, categories.currentCategory),
-                          );
-                        }, childCount: snapshot.data.results.length),
-                      );
-                    } else
-                      return Container();
-                  } else {
-                    return SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 250,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
+                      if (snapshot.connectionState == ConnectionState.done)
+                        return SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              return Align(
+                                alignment: Alignment.topCenter,
+                                child: buildCard(index, snapshot),
+                              );
+                            },
+                            childCount: snapshot
+                                .data.results.length, //child.results.length,
                           ),
-                          SizedBox(
-                            height: 300,
-                          )
-                        ],
-                      ),
-                    );
-                  }
-                },
-              ),
+                        );
+                      else
+                        return SliverToBoxAdapter(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                    } else
+                      return SliverToBoxAdapter(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                  }),
               SliverToBoxAdapter(
                 child: Align(
                   alignment: Alignment.topCenter,
@@ -208,6 +190,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         ElevatedButton(
                           onPressed: categories.currentCategoryPage > 1
                               ? () {
+                                  expandAppBar();
                                   categories.decrementCurrentCategoryPage();
                                 }
                               : null,
@@ -227,6 +210,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           onPressed: categories.currentCategoryPage <
                                   categories.currentCategoryMaxPages
                               ? () {
+                                  expandAppBar();
                                   categories.incrementCurrentCategoryPage();
                                 }
                               : null,
@@ -248,24 +232,38 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-}
 
-Widget buildCard(dynamic snapshot, int index, String currentCategory) {
-  if (currentCategory == 'Characters')
-    return CharacterCard(
-      result: snapshot.data.results[index],
-      index: index,
+  dynamic buildCard(int index, snapshot) {
+    if (categories.currentCategory == (api.Characters).toString())
+      return CharacterCard(
+        result: snapshot.data.results[index],
+      );
+    else if (categories.currentCategory == (Locations).toString())
+      return LocationsCard(
+        result: snapshot.data.results[index],
+      );
+    else if (categories.currentCategory == (Episodes).toString())
+      return EpisodesCard(
+        result: snapshot.data.results[index],
+      );
+  }
+
+  Future<void> updateData() {
+    if (categories.currentCategory == (api.Characters).toString())
+      dataList = api.Characters().fetchData(categories.currentCategoryPage);
+    else if (categories.currentCategory == (Locations).toString())
+      dataList = Locations().fetchData(categories.currentCategoryPage);
+    else if (categories.currentCategory == (Episodes).toString())
+      dataList = Episodes().fetchData(categories.currentCategoryPage);
+  }
+
+  void expandAppBar() {
+    widget.scrollController.animateTo(
+      widget.animation.barHeight.value,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 10),
     );
-  else if (currentCategory == 'Locations')
-    return LocationsCard(
-      result: snapshot.data.results[index],
-      index: index,
-    );
-  else if (currentCategory == 'Episodes')
-    return EpisodesCard(
-      result: snapshot.data.results[index],
-      index: index,
-    );
+  }
 }
 
 class EnterAnimation {

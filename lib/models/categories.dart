@@ -1,20 +1,28 @@
 import 'package:flutter/foundation.dart';
+import 'package:tashcommerce/api/characters.dart';
+import 'package:tashcommerce/api/episodes.dart';
+import 'package:tashcommerce/api/locations.dart';
 
 class Categories with ChangeNotifier {
   List<String> _categories = [
-    'Characters',
-    'Episodes',
-    'Locations',
+    (Characters).toString(),
+    (Episodes).toString(),
+    (Locations).toString(),
   ];
   Map<String, int> _pages = {
-    'Characters': 1,
-    'Episodes': 1,
-    'Locations': 1,
+    (Characters).toString(): 1,
+    (Episodes).toString(): 1,
+    (Locations).toString(): 1,
   };
+
+  int page(String cat) {
+    return _pages[cat];
+  }
+
   Map<String, int> _maxPages = {
-    'Characters': 2,
-    'Episodes': 2,
-    'Locations': 2,
+    (Characters).toString(): 2,
+    (Episodes).toString(): 2,
+    (Locations).toString(): 2,
   };
   int _index = 0;
 

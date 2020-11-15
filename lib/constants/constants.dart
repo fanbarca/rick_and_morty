@@ -63,12 +63,12 @@ LinearGradient kGradient = LinearGradient(
 
   //tileMode: TileMode.clamp, // repeats the gradient over the canvas
 );
-String rickAndMortyApi(Categories categories) {
-  if (categories.currentCategory == 'Characters')
+String rickAndMortyApi(String category) {
+  if (category == 'Characters')
     return rickAndMortyCharacters;
-  else if (categories.currentCategory == 'Locations')
+  else if (category == 'Locations')
     return rickAndMortyLocations;
-  else if (categories.currentCategory == 'Episodes')
+  else if (category == 'Episodes')
     return rickAndMortyEpisodes;
   else
     return 'https://rickandmortyapi.com/api/';

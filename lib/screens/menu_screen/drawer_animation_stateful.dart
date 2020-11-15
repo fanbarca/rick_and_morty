@@ -6,42 +6,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:tashcommerce/models/categories.dart';
-import 'package:tashcommerce/widgets/menu_tile.dart';
+import 'package:tashcommerce/models/drawer_specs.dart';
 
-// ignore: must_be_immutable
 class DrawerAnimation extends StatefulWidget {
   final Widget page;
-  double drawerSpecs;
 
-  DrawerAnimation({Key key, this.page, this.drawerSpecs}) : super(key: key);
+  DrawerAnimation({Key key, this.page}) : super(key: key);
 
   @override
   _DrawerAnimationState createState() => _DrawerAnimationState();
 }
 
 class _DrawerAnimationState extends State<DrawerAnimation> {
+  DrawerSpecs drawerSpecs;
+  Size size;
+  double newValue = 0;
+  bool moving = false;
+
   @override
   Widget build(BuildContext context) {
-    Categories categories = Provider.of<Categories>(context);
+    drawerSpecs = Provider.of<DrawerSpecs>(context);
+    size = MediaQuery.of(context).size;
+    if (!moving) newValue = drawerSpecs.getDrawerValue;
 
-    List<Widget> items = [];
-
-    for (int index = 0; index < categories.categoriesCount; index++) {
-      items.add(
-        MenuTile(
-          onTap: () {
-            //onTap();
-            categories.setIndex(index);
-            closeDrawer();
-          },
-//          drawerSpecs: drawerSpecs,
-          index: index,
-        ),
-      );
-    }
-
-    Size size = MediaQuery.of(context).size;
-    double newValue = widget.drawerSpecs < 0 ? 0 : widget.drawerSpecs;
     return Stack(
       children: <Widget>[
         TweenAnimationBuilder(
@@ -68,18 +55,20 @@ class _DrawerAnimationState extends State<DrawerAnimation> {
                 },
                 onHorizontalDragEnd: (details) {
                   if ((details.velocity.pixelsPerSecond.dx > 0)) {
-                    openDrawer(size);
+                    openDrawer();
                   } else if ((details.velocity.pixelsPerSecond.dx < 0)) {
                     closeDrawer();
                   } else {
                     if (newValue < size.width * 0.18) {
                       closeDrawer();
                     } else {
-                      openDrawer(size);
+                      openDrawer();
                     }
                   }
+                  if (moving) moving = false;
                 },
                 onHorizontalDragUpdate: (details) {
+                  if (!moving) moving = true;
                   if (details.delta.dx > 0) {
                     if (newValue < size.width * 0.48) {
                       moveRight(details);
@@ -97,7 +86,7 @@ class _DrawerAnimationState extends State<DrawerAnimation> {
                           BorderRadius.circular(100.0 * value / size.width),
                       child: child,
                     ),
-                    widget.drawerSpecs == 0
+                    newValue == 0
                         ? SizedBox()
                         : Container(
                             color: Colors.transparent,
@@ -114,13 +103,9 @@ class _DrawerAnimationState extends State<DrawerAnimation> {
         SafeArea(
           child: GestureDetector(
             onTap: () {
-              setState(
-                () {
-                  if (widget.drawerSpecs > 0)
-                    closeDrawer();
-                  else if (widget.drawerSpecs == 0) openDrawer(size);
-                },
-              );
+              if (newValue > 0)
+                closeDrawer();
+              else if (newValue == 0) openDrawer();
             },
             child: Padding(
               padding: EdgeInsets.all(12),
@@ -138,25 +123,27 @@ class _DrawerAnimationState extends State<DrawerAnimation> {
 
   void moveLeft(DragUpdateDetails details) {
     setState(() {
-      widget.drawerSpecs -= details.delta.dx.abs();
+      newValue -= details.delta.dx.abs();
     });
   }
 
   void moveRight(DragUpdateDetails details) {
     setState(() {
-      widget.drawerSpecs += details.delta.dx;
+      newValue += details.delta.dx;
     });
   }
 
-  void openDrawer(Size size) {
+  void openDrawer() {
     setState(() {
-      widget.drawerSpecs = (size.width * 0.5);
+      newValue = (size.width * 0.5);
     });
+    drawerSpecs.setDrawerValue(newValue);
   }
 
   void closeDrawer() {
     setState(() {
-      widget.drawerSpecs = (0);
+      newValue = (0);
     });
+    drawerSpecs.setDrawerValue(newValue);
   }
 }

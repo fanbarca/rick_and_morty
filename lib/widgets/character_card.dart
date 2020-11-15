@@ -7,11 +7,9 @@ import 'package:tashcommerce/models/food_item.dart';
 
 class CharacterCard extends StatelessWidget {
   final Character result;
-  final index;
   const CharacterCard({
     Key key,
     this.result,
-    this.index,
   }) : super(key: key);
 
   @override
@@ -25,11 +23,6 @@ class CharacterCard extends StatelessWidget {
             height: 170.0,
             decoration: BoxDecoration(
               color: Colors.white,
-//          gradient: RadialGradient(
-//            colors: [Colors.black, Colors.transparent],
-//            radius: 1.9,
-//            center: Alignment(0.0, 4.0),
-//          ),
               borderRadius: BorderRadius.circular(30.0),
               boxShadow: [
                 BoxShadow(
@@ -79,26 +72,6 @@ class CharacterCard extends StatelessWidget {
                         shadows: []),
                   ),
                 ),
-                // Positioned(
-                //   bottom: 20.0,
-                //   right: 0.0,
-                //   child: FlatButton.icon(
-                //     color: Colors.redAccent,
-                //     onPressed: () {},
-                //     label: Text('Add to cart',
-                //         style: GoogleFonts.ptMono(
-                //             fontSize: 15.0,
-                //             //backgroundColor: Colors.redAccent,
-                //             color: Colors.white,
-                //             //fontStyle: FontStyle.italic,
-                //             fontWeight: FontWeight.bold,
-                //             shadows: [])),
-                //     icon: Icon(
-                //       Icons.add_shopping_cart,
-                //       color: Colors.white,
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),

@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tashcommerce/models/categories.dart';
+import 'package:tashcommerce/models/drawer_specs.dart';
 import 'package:tashcommerce/widgets/menu_tile.dart';
 
-// ignore: must_be_immutable
 class DrawerBackground extends StatelessWidget {
-  double drawerSpecs;
-
-  final Function onTap;
-  DrawerBackground({Key key, double drawerSpecs, this.onTap}) : super(key: key);
+  DrawerBackground({Key key, double drawerSpecs}) : super(key: key);
+  Categories categories;
+  DrawerSpecs drawerSpecs;
 
   @override
   Widget build(BuildContext context) {
-    Categories categories = Provider.of<Categories>(context);
+    categories = Provider.of<Categories>(context);
+    drawerSpecs = Provider.of<DrawerSpecs>(context);
+
     List<Widget> items = [];
     for (int index = 0; index < categories.categoriesCount; index++) {
       items.add(
         MenuTile(
           onTap: () {
             categories.setIndex(index);
-            onTap();
+            drawerSpecs.setDrawerValue(0);
           },
-//          drawerSpecs: drawerSpecs,
           index: index,
         ),
       );
