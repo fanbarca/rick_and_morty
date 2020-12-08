@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import 'package:tashcommerce/models/categories.dart';
+import 'package:tashcommerce/providers/categories.dart';
 
-class MenuTile extends StatelessWidget {
+class MenuTile extends ConsumerWidget {
   MenuTile({
     Key key,
     this.index,
@@ -15,9 +15,9 @@ class MenuTile extends StatelessWidget {
   final Function onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, watch) {
     Size size = MediaQuery.of(context).size;
-    Categories categories = Provider.of<Categories>(context);
+    Categories categories = watch(categoriesProvider);
 
     double height = size.height * 0.09;
     double width = size.width;

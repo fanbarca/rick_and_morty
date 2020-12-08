@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tashcommerce/models/categories.dart';
-import 'package:tashcommerce/models/drawer_specs.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tashcommerce/constants/constants.dart';
+import 'package:tashcommerce/providers/categories.dart';
 import 'package:tashcommerce/widgets/menu_tile.dart';
 
-class DrawerBackground extends StatelessWidget {
+class DrawerBackground extends ConsumerWidget {
   DrawerBackground({Key key, double drawerSpecs}) : super(key: key);
-  Categories categories;
-  DrawerSpecs drawerSpecs;
 
   @override
-  Widget build(BuildContext context) {
-    categories = Provider.of<Categories>(context);
-    drawerSpecs = Provider.of<DrawerSpecs>(context);
+  Widget build(BuildContext context, watch) {
+    Categories categories = watch(categoriesProvider);
+    // DrawerSpecs drawerSpecs = Provider.of<DrawerSpecs>(context, listen: false);
+    print('build $this');
 
     List<Widget> items = [];
     for (int index = 0; index < categories.categoriesCount; index++) {
       items.add(
         MenuTile(
           onTap: () {
-            categories.setIndex(index);
-            drawerSpecs.setDrawerValue(0);
+            context.read(categoriesProvider).setIndex(index);
+            Navigator.of(context).pop();
+            // drawerSpecs.setDrawerValue(0);
           },
           index: index,
         ),
@@ -28,10 +28,8 @@ class DrawerBackground extends StatelessWidget {
     }
     return Container(
       decoration: BoxDecoration(
-          gradient: LinearGradient(
-        transform: GradientRotation(0.4),
-        colors: [Colors.deepOrangeAccent, Colors.cyan],
-      )),
+        gradient: kBackgroundGradient,
+      ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(

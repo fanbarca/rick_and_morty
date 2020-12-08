@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:tashcommerce/constants/constants.dart';
 
+import 'characters.dart';
+
 Locations locationsFromJson(String str) {
   Locations.fromJson(json.decode(str));
 }
@@ -32,16 +34,6 @@ class Locations {
         "info": info.toJson(),
         "results": List<dynamic>.from(results.map((x) => x.toJson())),
       };
-
-  Future<Locations> fetchData(int page) async {
-    String param = page > 1 ? '?page=$page' : '';
-    final response = await http.get('$rickAndMortyLocations$param');
-    if (response.statusCode == 200) {
-      return Locations.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load post');
-    }
-  }
 }
 
 class Info {

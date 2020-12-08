@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tashcommerce/models/categories.dart';
+import 'package:tashcommerce/api_models/episodes.dart';
+import 'package:tashcommerce/api_models/locations.dart';
 
 enum DrawerState { closed, closing, opening, opened }
 
@@ -63,17 +64,30 @@ LinearGradient kGradient = LinearGradient(
 
   //tileMode: TileMode.clamp, // repeats the gradient over the canvas
 );
-String rickAndMortyApi(String category) {
-  if (category == 'Characters')
-    return rickAndMortyCharacters;
-  else if (category == 'Locations')
-    return rickAndMortyLocations;
-  else if (category == 'Episodes')
-    return rickAndMortyEpisodes;
-  else
-    return 'https://rickandmortyapi.com/api/';
-}
-
-String rickAndMortyCharacters = "https://rickandmortyapi.com/api/character";
-String rickAndMortyLocations = "https://rickandmortyapi.com/api/location";
-String rickAndMortyEpisodes = "https://rickandmortyapi.com/api/episode";
+RadialGradient kBackgroundGradient = RadialGradient(
+  // transform: GradientRotation(0.4),
+  stops: [0.01, 0.68, 0.99],
+  radius: 3,
+  focal: Alignment(-2.5, 0.8),
+  center: Alignment.bottomRight,
+  colors: [
+    Colors.deepOrange,
+    Colors.lightGreenAccent,
+    Colors.cyan,
+  ],
+);
+//
+// String rickAndMortyApi(String category) {
+//   if (category == (Characters).toString())
+//     return rickAndMortyCharacters;
+//   else if (category == (Locations).toString())
+//     return rickAndMortyLocations;
+//   else if (category == (Episodes).toString())
+//     return rickAndMortyEpisodes;
+//   else
+//     return 'https://rickandmortyapi.com/api/';
+// }
+//
+// String rickAndMortyCharacters = "https://rickandmortyapi.com/api/character";
+// String rickAndMortyLocations = "https://rickandmortyapi.com/api/location";
+// String rickAndMortyEpisodes = "https://rickandmortyapi.com/api/episode";

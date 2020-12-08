@@ -1,9 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tashcommerce/api/locations.dart';
-import 'package:tashcommerce/models/food_item.dart';
+import 'package:tashcommerce/api_models/locations.dart';
 
 class LocationsCard extends StatelessWidget {
   final Location result;

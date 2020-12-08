@@ -4,14 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:provider/provider.dart';
-import 'package:tashcommerce/models/categories.dart';
-import 'package:tashcommerce/models/drawer_specs.dart';
+import 'package:tashcommerce/providers/drawer_specs.dart';
 
 class DrawerAnimation extends StatefulWidget {
-  final Widget page;
-
   DrawerAnimation({Key key, this.page}) : super(key: key);
+  final Widget page;
 
   @override
   _DrawerAnimationState createState() => _DrawerAnimationState();
@@ -25,27 +22,28 @@ class _DrawerAnimationState extends State<DrawerAnimation> {
 
   @override
   Widget build(BuildContext context) {
-    drawerSpecs = Provider.of<DrawerSpecs>(context);
+    print('build of $this');
+    // drawerSpecs = Provider.of<DrawerSpecs>(context);
     size = MediaQuery.of(context).size;
-    if (!moving) newValue = drawerSpecs.getDrawerValue;
+    // if (!moving) newValue = drawerSpecs.getDrawerValue;
 
     return Stack(
       children: <Widget>[
         TweenAnimationBuilder(
-          duration: Duration(milliseconds: 400),
+          duration: Duration(milliseconds: 200),
           curve: Curves.easeOutExpo,
           tween: Tween(begin: 0.0, end: newValue),
           builder: (context, value, child) {
             //double newX = ;
             //double newY = (size.height * (value * 0.2 / size.width)) / 2;
-            double newScale = (1 - value * 0.8 / size.width);
+            double newScale = (1 - value * 0.6 / size.width);
             return Transform(
               alignment: Alignment.centerRight,
-              transform: Matrix4.identity()
-                ..add(Matrix4.translationValues(value * 0.8, 0, 0))
-                ..setEntry(3, 2, 0.002)
-                ..rotateY(-value * 1.6 / size.width)
-                ..scale(newScale),
+              transform: Matrix4.translationValues(value * 0.5, 0, 0)
+                ..scale(newScale)
+                ..setEntry(3, 2, -0.0009)
+                ..rotateY(-value / size.width),
+              // ..scale(newScale),
               child: GestureDetector(
                 dragStartBehavior: DragStartBehavior.down,
                 onTap: () {
@@ -81,11 +79,7 @@ class _DrawerAnimationState extends State<DrawerAnimation> {
                 },
                 child: Stack(
                   children: <Widget>[
-                    ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(100.0 * value / size.width),
-                      child: child,
-                    ),
+                    child,
                     newValue == 0
                         ? SizedBox()
                         : Container(
@@ -100,6 +94,7 @@ class _DrawerAnimationState extends State<DrawerAnimation> {
           },
           child: widget.page,
         ),
+        Drawer(),
         SafeArea(
           child: GestureDetector(
             onTap: () {
@@ -112,7 +107,7 @@ class _DrawerAnimationState extends State<DrawerAnimation> {
               child: Icon(
                 Icons.menu,
                 size: 40,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withOpacity(0.8),
               ),
             ),
           ),
@@ -122,28 +117,30 @@ class _DrawerAnimationState extends State<DrawerAnimation> {
   }
 
   void moveLeft(DragUpdateDetails details) {
-    setState(() {
-      newValue -= details.delta.dx.abs();
-    });
+    // setState(() {
+    // });
+    newValue -= details.delta.dx.abs();
+    drawerSpecs.setDrawerValue(newValue);
   }
 
   void moveRight(DragUpdateDetails details) {
-    setState(() {
-      newValue += details.delta.dx;
-    });
+    // setState(() {
+    // });
+    newValue += details.delta.dx;
+    drawerSpecs.setDrawerValue(newValue);
   }
 
   void openDrawer() {
-    setState(() {
-      newValue = (size.width * 0.5);
-    });
+    // setState(() {
+    // });
+    newValue = (size.width * 0.5);
     drawerSpecs.setDrawerValue(newValue);
   }
 
   void closeDrawer() {
-    setState(() {
-      newValue = (0);
-    });
+    // setState(() {
+    // });
+    newValue = (0);
     drawerSpecs.setDrawerValue(newValue);
   }
 }

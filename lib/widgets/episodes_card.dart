@@ -1,10 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tashcommerce/api/characters.dart';
-import 'package:tashcommerce/api/episodes.dart';
-import 'package:tashcommerce/models/food_item.dart';
+import 'package:tashcommerce/api_models/episodes.dart';
 
 class EpisodesCard extends StatelessWidget {
   final Episode result;

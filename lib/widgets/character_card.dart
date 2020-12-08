@@ -1,9 +1,11 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tashcommerce/api/characters.dart';
-import 'package:tashcommerce/models/food_item.dart';
+import 'package:tashcommerce/api_models/characters.dart';
+import 'package:tashcommerce/ui/character_details_screen.dart';
 
 class CharacterCard extends StatelessWidget {
   final Character result;
@@ -15,20 +17,39 @@ class CharacterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return CharacterDetails(
+              character: result,
+            );
+          }),
+        );
+      },
       child: Stack(
         children: <Widget>[
           Container(
-            margin: EdgeInsets.all(30.0),
-            height: 170.0,
+            margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            height: 160.0,
             decoration: BoxDecoration(
               color: Colors.white,
+              // gradient: LinearGradient(
+              //   colors: [
+              //     Colors.tealAccent.shade100,
+              //     Colors.cyan.shade200,
+              //   ],
+              //   end: Alignment.bottomCenter,
+              //   begin: Alignment.topLeft,
+              // ),
               borderRadius: BorderRadius.circular(30.0),
               boxShadow: [
                 BoxShadow(
-                    offset: Offset(0, -3),
-                    color: Colors.black12,
-                    blurRadius: 7.0)
+                  offset: Offset(0.5, 4.0),
+                  color: Colors.black.withOpacity(0.4),
+                  blurRadius: 15.0,
+                  spreadRadius: 1,
+                )
               ],
             ),
             child: Stack(
@@ -36,14 +57,17 @@ class CharacterCard extends StatelessWidget {
                 Positioned(
                   top: 20.0,
                   left: 20.0,
-                  child: Text(
-                    '${result.name}',
-                    style: GoogleFonts.ptMono(
-                        fontSize: 30.0,
-                        color: Colors.brown,
-                        //fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold,
-                        shadows: []),
+                  child: Hero(
+                    tag: '${result.id}${result.name}',
+                    child: Text(
+                      result.name,
+                      style: GoogleFonts.ptMono(
+                          fontSize: 30.0,
+                          color: Colors.brown,
+                          //fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          shadows: []),
+                    ),
                   ),
                 ),
                 Positioned(
@@ -80,11 +104,16 @@ class CharacterCard extends StatelessWidget {
             right: 20.0,
             width: 130,
             height: 130,
-            child: ClipOval(
-              child: CachedNetworkImage(
-                imageUrl: result.image,
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+            child: Hero(
+              tag: '${result.id}${result.image}',
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: result.image,
+                  placeholder: (context, url) => CircularProgressIndicator(
+                    strokeWidth: 15,
+                  ),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
               ),
             ),
           ),

@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tashcommerce/constants/constants.dart';
 
+import 'characters.dart';
+
 Episodes episodesFromJson(String str) => Episodes.fromJson(json.decode(str));
 
 String episodesToJson(Episodes data) => json.encode(data.toJson());
@@ -29,16 +31,6 @@ class Episodes {
         "info": info.toJson(),
         "results": List<dynamic>.from(results.map((x) => x.toJson())),
       };
-
-  Future<Episodes> fetchData(int page) async {
-    String param = page > 1 ? '?page=$page' : '';
-    final response = await http.get('$rickAndMortyEpisodes$param');
-    if (response.statusCode == 200) {
-      return Episodes.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load post');
-    }
-  }
 }
 
 class Info {
